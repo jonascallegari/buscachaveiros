@@ -2,22 +2,13 @@
 <html lang="pt-br">
 
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1JWEKM49GK"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-1JWEKM49GK');
-    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- SEO Básico -->
     <meta name="author" content="Panda Pix" />
 
-    <title>Veterinários em Rio Claro | Clínicas Veterinárias Próximas</title>
+    <title>Chaveiros em Rio Claro | Chaveiros Próximas</title>
 
     <meta name="description" content="Encontre veterinários, veterinárias e clínicas veterinárias em Rio Claro. Veja os veterinários mais próximos de você, consultas, emergências e atendimento veterinário especializado." />
 
@@ -152,20 +143,35 @@
     <section class="container top-space">
         <div class="row justify-content-center">
             <div class="col-sm-6 col-12 text-center">
-                <img src="/assets/img/alerta.jpg" alt="" class="img-fluid rounded mb-5">
+                <img src="/assets/img/alerta.jpg" alt="" class="img-fluid rounded mb-2">
 
             <div class="text-shadow">
-                <h2 class="text-light">
+                <h1 class="text-light">
                     <strong>
-                        Chaveiro em <span id="tituloCidade"></span>
+                        Encontre Chaveiros em <span id="tituloCidade"></span>
                     </strong>
-                </h2>
-            </div>                
-           
+                </h1>
+            </div>
+
+                <div class="text-center mb-3">
+                    <button id="btnProximidade" class="btn btn-outline-light rounded-pill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-cursor-fill"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z" />
+                        </svg> Atualizar localização
+                    </button>
+                </div>
+                <label for="order"><p class="fw-bold lead text-white text-shadow">Ordenar por:</p></label>
+                <select class="form-select form-select-lg mb-3 shadow" aria-label="order">
+                    <option value="0" selected>Mais Perto</option>
+                    <option value="1">Ordem Alfabética</option>
+                </select>
+            </div>
         </div>
 
         <div class="row mt-4 justify-content-center">
-            <div id="conteudoClinica"></div>
+            <div class="row justify-content-center" id="clinics-container"></div><!-- Cards renderizados dinamicamente -->
         </div>
     </section>
 
@@ -202,6 +208,7 @@
             <strong>maior visibilidade online</strong> e fortalecendo a 
             <strong>presença digital dos veterinários em <span class="nomeCidade"></span> e região</strong>.
         </p>
+
         <h5>Conheça todas as cidades:</h5>
         <div id="botoesCidades" class="mt-4"></div>
     </div>
@@ -229,8 +236,8 @@
     <script src="/assets/js/scripts.js"></script>
 
     <!-- Ordenação dinâmica de anunciantes -->
+
     <script src="/cidade-app.js"></script>
-    <script src="/clinica.js"></script>
     <script src="/scripts/global.js"></script>
 </body>
 

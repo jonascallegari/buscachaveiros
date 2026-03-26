@@ -28,7 +28,7 @@
         if (!clinics.length) {
             container.innerHTML = `
                 <div class="col-12 text-center text-white">
-                    <h4>Nenhum anunciante cadastrado nesta cidade ainda.</h4>
+                    <h4>Nenhuma clínica cadastrada nesta cidade ainda.</h4>
                 </div>
             `;
             return;
@@ -179,7 +179,7 @@
             : '55' + digits;
 
         const message =
-            `Olá. Visitei seu anúncio no Busca Chaveiros e gostaria de saber mais sobre ${clinicName}.`;
+            `Olá. Visitei seu anúncio no Busca Veterinários e gostaria de saber mais sobre ${clinicName}.`;
 
         return `https://api.whatsapp.com/send?phone=${phoneParam}&text=${encodeURIComponent(message)}`;
     }
@@ -267,7 +267,7 @@
         if (linkSobre) {
             linkSobre.setAttribute(
                 "title",
-                `Sobre o guia de chaveiros em ${city.name}`
+                `Sobre o guia de veterinários, veterinárias e clínicas veterinárias em ${city.name}`
             );
         }
         
@@ -342,7 +342,7 @@
                 console.warn(error);
 
                 btn.disabled = false;
-                btn.innerText = "📍 Mostrar chaveiros mais próximas de mim";
+                btn.innerText = "📍 Mostrar clínicas mais próximas de mim";
             }
         );
     }
@@ -399,7 +399,7 @@
         if (description) {
             description.setAttribute(
                 "content",
-                `Encontre chaveiros em ${cityName}. Veja os profissionais mais próximos, emergências e atendimento especializado.`
+                `Encontre veterinários, veterinárias e clínicas veterinárias em ${cityName}. Veja os profissionais mais próximos, consultas, emergências e atendimento veterinário especializado.`
             );
         }
 
@@ -408,7 +408,7 @@
         if (keywords) {
             keywords.setAttribute(
                 "content",
-                `chaveiros em ${cityName}, cópias de chaves em ${cityName}, chaveiro perto de mim, cadeados`
+                `veterinários, veterinárias, clínicas veterinárias, veterinários em ${cityName}, clínicas veterinárias em ${cityName}, veterinário perto de mim, hospital veterinário`
             );
         }
 
@@ -417,7 +417,7 @@
         if (ogTitle) {
             ogTitle.setAttribute(
                 "content",
-                `Chaveiros em ${cityName} | Cópias de Chaves`
+                `Veterinários em ${cityName} | Clínicas Veterinárias e Atendimento Pet`
             );
         }
 
@@ -425,7 +425,7 @@
         if (ogDesc) {
             ogDesc.setAttribute(
                 "content",
-                `Lista completa de chaveiros próximos em ${cityName}. Atendimento para cópias de chaves.`
+                `Lista completa de clínicas veterinárias, hospitais e veterinários próximos em ${cityName}. Atendimento para cães, gatos e pets exóticos.`
             );
         }
 
@@ -434,7 +434,7 @@
         if (twitterTitle) {
             twitterTitle.setAttribute(
                 "content",
-                `Chaveiros em ${cityName} | Chaveiros Próximos`
+                `Veterinários em ${cityName} | Clínicas Veterinárias Próximas`
             );
         }
 
@@ -442,7 +442,7 @@
         if (twitterDesc) {
             twitterDesc.setAttribute(
                 "content",
-                `Encontre chaveiros mais próximos em ${cityName} com atendimento emergencial para cópias de chaves.`
+                `Encontre clínicas veterinárias e veterinários mais próximos em ${cityName} com atendimento completo para seu pet.`
             );
         }
 
@@ -462,17 +462,17 @@
             const schema = {
                 "@context": "https://schema.org",
                 "@type": "VeterinaryCare",
-                "name": `Guia de Chaveiros em ${cityName}`,
-                "description": `Guia completo com chaveiros em ${cityName}`,
+                "name": `Guia de Clínicas Veterinárias em ${cityName}`,
+                "description": `Guia completo com clínicas veterinárias, veterinários e hospitais veterinários em ${cityName}`,
                 "areaServed": {
                     "@type": "City",
                     "name": cityName
                 },
                 "serviceType": [
-                    "Chaves",
-                    "Emergência chaveiro",
-                    "Chaveiros",
-                    "Atendimento 24 horas"
+                    "Consulta veterinária",
+                    "Emergência veterinária",
+                    "Hospital veterinário",
+                    "Atendimento veterinário 24 horas"
                 ],
                 "url": `https://www.buscaclinicasveterinarias.com.br/${uf}/${citySlug}`
             };
@@ -480,7 +480,7 @@
             // Título
             const tituloSobre = document.getElementById("tituloSobre");
             if (tituloSobre) {
-                tituloSobre.innerText = `Guia de Chaveiros em ${cityName}`;
+                tituloSobre.innerText = `Guia de Veterinários e Clínicas Veterinárias em ${cityName}`;
             }
 
             // Alt e Title
