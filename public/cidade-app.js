@@ -392,7 +392,7 @@
         const uf = city.state.toLowerCase();
 
         // TITLE
-        document.title = `Veterinários em ${cityName} | Clínicas Veterinárias Próximas`;
+        document.title = `Chaveiros em ${cityName} | Chaveiros Próximos`;
 
         // META DESCRIPTION
         const description = document.querySelector('meta[name="description"]');
@@ -451,7 +451,7 @@
         if (canonical) {
             canonical.setAttribute(
                 "href",
-                `https://www.buscaclinicasveterinarias.com.br/${uf}/${citySlug}`
+                `https://www.buscachaveiros.com.br/${uf}/${citySlug}`
             );
         }
 
@@ -474,7 +474,7 @@
                     "Chaveiros",
                     "Atendimento 24 horas"
                 ],
-                "url": `https://www.buscaclinicasveterinarias.com.br/${uf}/${citySlug}`
+                "url": `https://www.buscachaveiros.com.br/${uf}/${citySlug}`
             };
 
             // Título

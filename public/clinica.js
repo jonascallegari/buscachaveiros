@@ -21,7 +21,7 @@
     if (!res.ok) {
       document.body.innerHTML = `
                 <div class="container text-center my-5">
-                    <h1>Clínica não encontrada</h1>
+                    <h1>Anunciante não encontrada</h1>
                     <a href="/${uf}/${citySlug}" class="btn btn-primary mt-3">
                         Voltar para a cidade
                     </a>
@@ -183,7 +183,7 @@
     if (canonical) {
       canonical.setAttribute(
         "href",
-        `https://www.buscaclinicasveterinarias.com.br/${uf}/${citySlug}/${clinic.slug}`
+        `https://www.buscachaveiros.com.br/${uf}/${citySlug}/${clinic.slug}`
       );
     }
   }
