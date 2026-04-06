@@ -461,7 +461,7 @@
         if (schemaScript) {
             const schema = {
                 "@context": "https://schema.org",
-                "@type": "VeterinaryCare",
+                "@type": "Chaveiro",
                 "name": `Guia de Chaveiros em ${cityName}`,
                 "description": `Guia completo com chaveiros em ${cityName}`,
                 "areaServed": {

@@ -58,18 +58,567 @@ db.all("SELECT id, name FROM clinics WHERE slug IS NULL OR slug = ''", [], (err,
 // Página individual da clínica
 app.get('/:uf/:citySlug/:clinicSlug', (req, res, next) => {
 
-  if (req.params.uf === 'api') return next();
+  if (
+    req.params.uf === 'api' ||
+    req.params.clinicSlug.includes('.')
+  ) return next();
 
-  res.sendFile(path.join(__dirname, 'public/clinica.html'));
+  const { uf, citySlug, clinicSlug } = req.params;
+
+  db.get(
+    "SELECT * FROM cities WHERE slug = ? AND LOWER(state) = LOWER(?)",
+    [citySlug, uf],
+    (err, city) => {
+
+      if (err || !city) {
+        return res.sendFile(path.join(__dirname, 'public/clinica.html'));
+      }
+
+      const cityName = city.name;
+
+      // 👉 OPCIONAL (RECOMENDADO): buscar a clínica também
+      db.get(
+        `
+        SELECT clinics.*, cities.name as city_name
+        FROM clinics
+        JOIN cities ON clinics.city_id = cities.id
+        WHERE clinics.slug = ?
+        AND cities.slug = ?
+        AND LOWER(cities.state) = LOWER(?)
+        `,
+        [clinicSlug, citySlug, uf],
+        (err2, clinic) => {
+
+          if (err2 || !clinic) {
+            return res.sendFile(path.join(__dirname, 'public/clinica.html'));
+          }
+
+          const clinicName = clinic.name;
+
+          const html = `
+        <!doctype html>
+<html lang="pt-br">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V21QM0F5K1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V21QM0F5K1');
+</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- SEO Básico -->
+    <meta name="author" content="Panda Pix" />
+
+    <title>${clinicName} em ${cityName} | Chaveiro</title>
+
+    <meta name="description" content="Encontre chaveiros em ${cityName}. Veja os profissionais mais próximos, emergências e atendimento especializado." />
+
+    <!-- Keywords (Bing auxiliar) -->
+    <meta name="keywords" content="chaveiros em ${cityName}, cópias de chaves em ${cityName}, chaveiro perto de mim, cadeados" />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.pandapix.com.br/chaveiros/" />
+
+    <!-- Open Graph (IA + redes sociais) -->
+    <meta property="og:title" content="Chaveiros em ${cityName} | Cópias de Chaves" />
+    <meta property="og:description" content="Lista completa de chaveiros, chaveiros próximos em ${cityName}. Atendimento para cópias de chaves." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.pandapix.com.br/chaveiros/" />
+    <meta property="og:image" content="https://www.pandapix.com.br" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Chaveiros em ${cityName} | Chaveiros Próximos">
+    <meta name="twitter:description" content="Encontre chaveiros mais próximos em ${cityName} com atendimento emergencial para cópias de chaves.">
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Schema Local SEO + IA -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Chaveiro",
+      "name": "Guia de Chaveiros em ${cityName}",
+      "description": "Guia completo com chaveiros em ${cityName}",
+      "areaServed": {
+        "@type": "City",
+        "name": "cityName"
+      },
+      "serviceType": [
+        "Chaves",
+        "Emergência chaveiro",
+        "Chaveiros",
+        "Atendimento 24 horas"
+      ],
+      "url": "https://www.pandapix.com.br/chaveiros/"
+    }
+    </script>
+
+</head>
+
+<body>
+    <!-- Navigation-->
+<nav class="navbar navbar-expand-lg bg-transparent" id="mainNav">
+    <div class="container-fluid">            
+        <a class="navbar-brand js-scroll-trigger" href="https://buscachaveiros.com.br/"
+           title="Chaveiros em ${cityName}">
+            <img src="/assets/img/logo-chaveiros.png" class="img-fluid"
+                 title="Guia de Chaveiros em ${cityName}"
+                 alt="Guia de Chaveiros em ${cityName} ${uf}" />
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false"
+            aria-label="Abrir menu de Chaveiros em ${cityName}">
+            <span class="navbar-toggler-icon"></span>
+        </button>    
+
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav me-auto mt-2 text-shadow">
+
+                <a id="linkSobre" class="nav-link js-scroll-trigger link-light" href="#sobre" title="">
+                    Sobre
+                </a>
+
+            </div>
+        </div>
+
+        <div class="col-md-3 col-12 d-flex justify-content-end align-items-center">
+
+            <!-- WhatsApp -->
+            <a class="btn btn-success text-uppercase"
+               onclick="return gtag_report_conversion('https://api.whatsapp.com/send?phone=551930233654&text=Ol%C3%A1.%20Vi%20seu%20site%20e%20gostaria%20de%20saber%20mais.');"
+               href="https://api.whatsapp.com/send?phone=551930233654&text=Ol%C3%A1.%20Gostaria%20de%20anunciar%20no%20Busca%20Chaveiros."
+               title="Anunciar no guia de Chaveiros">
+               
+                <strong>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-whatsapp"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
+                    </svg>
+                    <span class="d-mobile-none">ANUNCIE AQUI!</span>
+                </strong>
+
+            </a>
+
+        </div>
+
+    </div>
+</nav>
+
+<div id="carouselExampleIndicators" class="carousel" data-ride="carousel">
+
+    <div class="carousel-inner z-n1 position-absolute top-negative">
+
+        <div class="carousel-item active text-light" data-interval="2500">
+
+            <img class="d-none d-sm-block d-sm-none d-md-block w-100"
+                 src="/assets/img/fundo-chaveiro.jpg"
+                 alt="Chaveiros em ${cityName} ${uf} atendimento completo"
+                 title="Chaveiros em ${cityName} ${uf} atendimento completo">
+
+            <img class="d-sm-block d-md-none w-100 mt-5"
+                 src="/assets/img/fundo-chaveiro-cel.jpg"
+                 alt="Chaveiros em ${cityName} atendimento próximo de você"
+                 title="Chaveiros mais próximos em ${cityName} atendimento especializado">
+        </div>  
+
+    </div>
+</div>
+
+
+    <section class="container top-space">
+        <div class="row justify-content-center">
+            <div class="col-sm-6 col-12 text-center">
+                <img src="/assets/img/alerta.jpg" alt="" class="img-fluid rounded mb-5">
+
+            <div class="text-shadow">
+                <h2 class="text-light">
+                    <strong>
+                        Chaveiro em <span id="tituloCidade">${cityName}</span>
+                    </strong>
+                </h2>
+            </div>                
+           
+        </div>
+
+        <div class="row mt-4 justify-content-center">
+            <div id="conteudoClinica"></div>
+        </div>
+    </section>
+
+    <section class="bg-image">
+        <div class="container">
+<div class="row" id="sobre">
+    <div class="col-md-3">
+        <img src="/assets/img/chaveiro.png" 
+             alt="Chaveiros em ${cityName} ${uf} atendimento especializado"
+             title="Chaveiros em ${cityName} ${uf} atendimento completo"
+             class="img-fluid">
+    </div>
+
+    <div class="col-md-7 padding-top-space text-white">
+        <h2 id="tituloSobre">Guia Chaveiros em </h2>
+
+        <h3>Criado para Conectar Cliente e Chaveiros</h3>
+
+        <p>
+            O site <strong>Chaveiros em <span class="nomeCidade">${cityName}</span></strong> foi desenvolvido para ajudar moradores e comerciantes a encontrar 
+            <strong>chaveiros, oficinas de chaves e serviços de cópias e manutenção em <span class="nomeCidade">${cityName}</span> ${uf}</strong> 
+            com rapidez e segurança.
+        </p>
+
+        <p>
+            Aqui você encontra uma seleção criteriosa de <strong>chaveiros em <span class="nomeCidade">${cityName}</span></strong>, com informações claras, 
+            atualizadas e de fácil acesso, facilitando a busca por 
+            <strong>chaveiros próximos</strong> e pelo melhor atendimento para suas necessidades.
+        </p>
+
+        <p>
+            Nosso objetivo é valorizar e divulgar <strong>chaveiros de qualidade</strong>, ao mesmo tempo em que 
+            oferecemos conteúdo otimizado para Google, Bing e inteligências artificiais de busca, garantindo 
+            <strong>maior visibilidade online</strong> e fortalecendo a 
+            <strong>presença digital dos chaveiros em <span class="nomeCidade">${cityName}</span> e região</strong>.
+        </p>
+        <h5>Conheça todas as cidades:</h5>
+        <div id="botoesCidades" class="mt-4"></div>
+    </div>
+</div>    
+            <hr class="my-5">
+
+            <footer>
+                <div class="row pb-5 justify-content-center">
+                    <div class="col-md-2 col-6">
+                        <img src="/assets/img/logo-chaveiros-branco.png" class="card-img opacity-75" alt="Chaveiros em ${cityName}">
+                    </div>
+                </div>
+            </footer>
+            
+            
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Third party plugin JS-->
+    <script src="/https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    
+    <!-- Core theme JS-->
+    <script src="/assets/js/scripts.js"></script>
+
+    <!-- Ordenação dinâmica de anunciantes -->
+    <script src="/cidade-app.js"></script>
+    <script src="/clinica.js"></script>
+    <script src="/scripts/global.js"></script>
+</body>
+
+</html>
+      `;
+
+      res.send(html);
+    }
+      );
+    }
+  );
 });
 
 // Página da cidade
 app.get('/:uf/:slug', (req, res, next) => {
 
-  // Ignora chamadas da API
   if (req.params.uf === 'api') return next();
 
-  res.sendFile(path.join(__dirname, 'public/cidade.html'));
+  const { uf, slug } = req.params;
+
+  db.get(
+    "SELECT * FROM cities WHERE slug = ? AND LOWER(state) = LOWER(?)",
+    [slug, uf],
+    (err, city) => {
+
+      if (err || !city) {
+        return res.sendFile(path.join(__dirname, 'public/cidade.html'));
+      }
+
+      const cityName = city.name;
+
+      const html = `
+        <!doctype html>
+<html lang="pt-br">
+
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-V21QM0F5K1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-V21QM0F5K1');
+</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- SEO Básico -->
+    <meta name="author" content="Panda Pix" />
+
+    <title>Chaveiros em ${cityName} | Chaveiros Próximos</title>
+
+    <meta name="description" content="Encontre chaveiros em ${cityName}. Veja os profissionais mais próximos, emergências e atendimento especializado." />
+
+    <!-- Keywords (Bing auxiliar) -->
+    <meta name="keywords" content="chaveiros em ${cityName}, cópias de chaves em ${cityName}, chaveiro perto de mim, cadeados" />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.pandapix.com.br/chaveiros/" />
+
+    <!-- Open Graph (IA + redes sociais) -->
+    <meta property="og:title" content="Chaveiros em ${cityName} | Cópias de Chaves" />
+    <meta property="og:description" content="Lista completa de chaveiros, chaveiros próximos em ${cityName}. Atendimento para cópias de chaves." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.pandapix.com.br/chaveiros/" />
+    <meta property="og:image" content="https://www.pandapix.com.br" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Chaveiros em ${cityName} | Chaveiros Próximos">
+    <meta name="twitter:description" content="Encontre chaveiros mais próximos em ${cityName} com atendimento emergencial para cópias de chaves.">
+
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Schema Local SEO + IA -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Chaveiro",
+      "name": "Guia de Chaveiros em ${cityName}",
+      "description": "Guia completo com chaveiros em ${cityName}",
+      "areaServed": {
+        "@type": "City",
+        "name": "cityName"
+      },
+      "serviceType": [
+        "Chaves",
+        "Emergência chaveiro",
+        "Chaveiros",
+        "Atendimento 24 horas"
+      ],
+      "url": "https://www.pandapix.com.br/chaveiros/"
+    }
+    </script>
+
+</head>
+
+<body>
+    <!-- Navigation-->
+<nav class="navbar navbar-expand-lg bg-transparent" id="mainNav">
+    <div class="container-fluid">            
+        <a class="navbar-brand js-scroll-trigger" href="https://buscachaveiros.com.br/"
+           title="Chaveiros em ${cityName}">
+            <img src="/assets/img/logo-chaveiros.png" class="img-fluid"
+                 title="Guia de chaveiros em ${cityName}"
+                 alt="Guia de chaveiros em ${cityName}" />
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false"
+            aria-label="Abrir menu de chaveiros em ${cityName}">
+            <span class="navbar-toggler-icon"></span>
+        </button>    
+
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav me-auto mt-2 text-shadow">
+
+                <a id="linkSobre" class="nav-link js-scroll-trigger link-light" href="#sobre" title="">
+                    Sobre
+                </a>
+
+            </div>
+        </div>
+
+        <div class="col-md-3 col-12 d-flex justify-content-end align-items-center">
+
+            <!-- WhatsApp -->
+            <a class="btn btn-success text-uppercase"
+               onclick="return gtag_report_conversion('https://api.whatsapp.com/send?phone=551930233654&text=Ol%C3%A1.%20Vi%20seu%20site%20e%20gostaria%20de%20saber%20mais.');"
+               href="https://api.whatsapp.com/send?phone=551930233654&text=Ol%C3%A1.%20Gostaria%20de%20anunciar%20no%20Busca%20Chaveiros."
+               title="Anunciar no guia de chaveiros">
+               
+                <strong>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-whatsapp"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232" />
+                    </svg>
+                    <span class="d-mobile-none">ANUNCIE AQUI!</span>
+                </strong>
+
+            </a>
+
+        </div>
+
+    </div>
+</nav>
+
+<div id="carouselExampleIndicators" class="carousel" data-ride="carousel">
+
+    <div class="carousel-inner z-n1 position-absolute top-negative">
+
+        <div class="carousel-item active text-light" data-interval="2500">
+
+            <img class="d-none d-sm-block d-sm-none d-md-block w-100"
+                 src="/assets/img/fundo-chaveiro.jpg"
+                 alt="Chaveiros em ${cityName} atendimento completo"
+                 title="Chaveiros em ${cityName} atendimento completo">
+
+            <img class="d-sm-block d-md-none w-100 mt-5"
+                 src="/assets/img/fundo-chaveiro-cel.jpg"
+                 alt="Chaveiros em ${cityName} atendimento próximo de você"
+                 title="Chaveiros mais próximos em ${cityName} atendimento especializado">
+        </div>  
+
+    </div>
+</div>
+
+
+    <section class="container top-space">
+        <div class="row justify-content-center">
+            <div class="col-sm-6 col-12 text-center">
+                <img src="/assets/img/alerta.jpg" alt="" class="img-fluid rounded mb-2">
+
+            <div class="text-shadow">
+                <h1 class="text-light">
+                    <strong>
+                        Encontre Chaveiros em <br> <span id="tituloCidade">${cityName}</span>
+                    </strong>
+                </h1>
+            </div>
+
+                <div class="text-center mb-3">
+                    <button id="btnProximidade" class="btn btn-outline-light rounded-pill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-cursor-fill"
+                            viewBox="0 0 16 16">
+                            <path
+                                d="M14.082 2.182a.5.5 0 0 1 .103.557L8.528 15.467a.5.5 0 0 1-.917-.007L5.57 10.694.803 8.652a.5.5 0 0 1-.006-.916l12.728-5.657a.5.5 0 0 1 .556.103z" />
+                        </svg> Atualizar localização
+                    </button>
+                </div>
+                <label for="order"><p class="fw-bold lead text-white text-shadow">Ordenar por:</p></label>
+                <select class="form-select form-select-lg mb-3 shadow" aria-label="order">
+                    <option value="0" selected>Mais Perto</option>
+                    <option value="1">Ordem Alfabética</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row mt-4 justify-content-center">
+            <div class="row justify-content-center" id="clinics-container"></div><!-- Cards renderizados dinamicamente -->
+        </div>
+    </section>
+
+    <section class="bg-image">
+        <div class="container">
+<div class="row" id="sobre">
+    <div class="col-md-3">
+        <img src="/assets/img/chaveiro.png" 
+             alt="Chaveiros em ${cityName} atendimento completo"
+             title="Chaveiros em ${cityName} atendimento completo"
+             class="img-fluid">
+    </div>
+
+    <div class="col-md-7 padding-top-space text-white">
+        <h2 id="tituloSobre">Guia de Chaveiros em ${cityName}</h2>
+
+        <h3>Criado para Conectar Clientes e Chaveiros</h3>
+
+        <p>
+            O site <strong>Chaveiros em <span class="nomeCidade">${cityName}</span></strong> foi desenvolvido para ajudar moradores e comerciantes a encontrar 
+            <strong>chaveiros, oficinas de chaves e serviços de cópias e manutenção em <span class="nomeCidade">${cityName} - ${uf}</span></strong> 
+            com rapidez e segurança.
+        </p>
+
+        <p>
+            Aqui você encontra uma seleção criteriosa de <strong>chaveiros em <span class="nomeCidade"></span></strong>, com informações claras, 
+            atualizadas e de fácil acesso, facilitando a busca por 
+            <strong>chaveiros próximos</strong> e pelo melhor atendimento para suas necessidades.
+        </p>
+
+        <p>
+            Nosso objetivo é valorizar e divulgar <strong>chaveiros de qualidade</strong>, ao mesmo tempo em que 
+            oferecemos conteúdo otimizado para Google, Bing e inteligências artificiais de busca, garantindo 
+            <strong>maior visibilidade online</strong> e fortalecendo a 
+            <strong>presença digital dos chaveiros em <span class="nomeCidade">${cityName}</span> e região</strong>.
+        </p>
+
+        <h5>Conheça todas as cidades:</h5>
+        <div id="botoesCidades" class="mt-4"></div>
+    </div>
+</div>    
+            <hr class="my-5">
+
+            <footer>
+                <div class="row pb-5 justify-content-center">
+                    <div class="col-md-2 col-6">
+                        <img src="/assets/img/logo-chaveiros-branco.png" class="card-img opacity-75" alt="Chaveiros em ${cityName}">
+                    </div>
+                </div>
+            </footer>
+            
+            
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Third party plugin JS-->
+    <script src="/https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    
+    <!-- Core theme JS-->
+    <script src="/assets/js/scripts.js"></script>
+
+    <!-- Ordenação dinâmica de anunciantes -->
+
+    <script src="/cidade-app.js"></script>
+    <script src="/scripts/global.js"></script>
+</body>
+
+</html>
+      `;
+
+      res.send(html);
+    }
+  );
 });
 
 /* =====================================================
