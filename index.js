@@ -126,14 +126,14 @@ app.get('/:uf/:citySlug/:clinicSlug', (req, res, next) => {
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://www.pandapix.com.br/chaveiros/" />
+    <link rel="canonical" href="https://www.buscachaveiros.com.br" />
 
     <!-- Open Graph (IA + redes sociais) -->
     <meta property="og:title" content="Chaveiros em ${cityName} | Cópias de Chaves" />
     <meta property="og:description" content="Lista completa de chaveiros, chaveiros próximos em ${cityName}. Atendimento para cópias de chaves." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.pandapix.com.br/chaveiros/" />
-    <meta property="og:image" content="https://www.pandapix.com.br" />
+    <meta property="og:url" content="https://www.buscachaveiros.com.br" />
+    <meta property="og:image" content="https://www.buscachaveiros.com.br" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
@@ -169,7 +169,7 @@ app.get('/:uf/:citySlug/:clinicSlug', (req, res, next) => {
         "Chaveiros",
         "Atendimento 24 horas"
       ],
-      "url": "https://www.pandapix.com.br/chaveiros/"
+      "url": "https://www.buscachaveiros.com.br"
     }
     </script>
 
@@ -391,14 +391,14 @@ app.get('/:uf/:slug', (req, res, next) => {
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://www.pandapix.com.br/chaveiros/" />
+    <link rel="canonical" href="https://www.buscachaveiros.com.br" />
 
     <!-- Open Graph (IA + redes sociais) -->
     <meta property="og:title" content="Chaveiros em ${cityName} | Cópias de Chaves" />
     <meta property="og:description" content="Lista completa de chaveiros, chaveiros próximos em ${cityName}. Atendimento para cópias de chaves." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.pandapix.com.br/chaveiros/" />
-    <meta property="og:image" content="https://www.pandapix.com.br" />
+    <meta property="og:url" content="https://www.buscachaveiros.com.br" />
+    <meta property="og:image" content="https://www.buscachaveiros.com.br" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
@@ -434,7 +434,7 @@ app.get('/:uf/:slug', (req, res, next) => {
         "Chaveiros",
         "Atendimento 24 horas"
       ],
-      "url": "https://www.pandapix.com.br/chaveiros/"
+      "url": "https://www.buscachaveiros.com.br"
     }
     </script>
 
